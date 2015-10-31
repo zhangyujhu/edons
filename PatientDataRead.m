@@ -11,7 +11,7 @@ c={};
 for i=10:10;%length(n_records)
     record=n_records{i};
     info_n=wfdbdesc(strcat('/mimic2wdb/',record,record(4:end-1),'n'));
-    [tm_n,sig_n]=rdsamp(strcat('/mimic2wdb/',record,record(4:end-1),'n'),[],1000);
+    [tm_n,sig_n]=rdsamp(strcat('/mimic2wdb/',record,record(4:end-1),'n'),[]);
     
     info=wfdbdesc(strcat('/mimic2wdb/',record));
     [tm,sig]=rdsamp(strcat('/mimic2wdb/',record),[]);
