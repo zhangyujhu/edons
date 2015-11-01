@@ -13,12 +13,12 @@ allpatients=cell(1,length(n_records));
 
 
 
-for i=[1:10]%length(n_records)
+for i=[51:100]%length(n_records)
     
     record=n_records{i};
     
     recFile=urlread(strcat(n_urld,record,'RECORDS'));%list of all files in record
-    disp(i)
+    fprintf('patient %d \n',i)
     if ~isempty(strfind(recFile,'n'))
         
         info_n=wfdbdesc(strcat('/mimic2wdb/',record,record(4:end-1),'n'));
@@ -44,7 +44,7 @@ for i=[1:10]%length(n_records)
                 tm=[tm; tm_temp];
                 sig=[sig; sig_temp];
                 
-                fprintf('iter=%d ',iter)
+                fprintf('iter=%d \n',iter)
             end
             
             [tm_temp,sig_temp]=rdsamp(strcat('/mimic2wdb/',record),[],sigLength,1E5  *numIter+1);
@@ -57,22 +57,22 @@ for i=[1:10]%length(n_records)
         
         toc
         
-        patiend_data=struct('Time_n',tm_n,'HR',[],'SpO2',[],'Resp_n',[],'NBP_sys',[],'NBP_dias',[], 'NBP_mean',[],'II',[],'III',[],'aVR',[],'Resp',[],'Pleth',[]);
+        patient_data=struct('Time_n',tm_n,'HR',[],'SpO2',[],'Resp_n',[],'NBP_sys',[],'NBP_dias',[], 'NBP_mean',[],'Time',tm,'II',[],'III',[],'V',[],'aVR',[],'Resp',[],'Pleth',[]);
         CH=length(info_n);
         for ch=1:CH
             switch info_n(ch).Description
                 case 'HR'
-                    patiend_data.HR=sig_n(:,ch);
+                    patient_data.HR=sig_n(:,ch);
                 case 'SpO2'
-                    patiend_data.SpO2=sig_n(:,ch);
+                    patient_data.SpO2=sig_n(:,ch);
                 case 'RESP'
-                    patiend_data.Resp_n=sig_n(:,ch);
+                    patient_data.Resp_n=sig_n(:,ch);
                 case 'NBP Sys'
-                    patiend_data.NBP_sys=sig_n(:,ch);
+                    patient_data.NBP_sys=sig_n(:,ch);
                 case 'NBP Dias'
-                    patiend_data.NBP_dias=sig_n(:,ch);
+                    patient_data.NBP_dias=sig_n(:,ch);
                 case 'NBP Mean'
-                    patiend_data.NBP_mean=sig_n(:,ch);
+                    patient_data.NBP_mean=sig_n(:,ch);
             end
         end
         
@@ -81,20 +81,24 @@ for i=[1:10]%length(n_records)
         for ch=1:CH
             switch info(ch).Description
                 case 'II'%put v in later
-                    patiend_data.II=sig(:,ch);
+                    patient_data.II=sig(:,ch);
                 case 'III'
-                    patiend_data.III=sig(:,ch);
+                    patient_data.III=sig(:,ch);
+                case 'V'
+                    patient_data.V=sig(:,ch);
                 case 'AVR'
-                    patiend_data.aVR=sig(:,ch);
+                    patient_data.aVR=sig(:,ch);
                 case 'RESP'
-                    patiend_data.Resp=sig(:,ch);
+                    patient_data.Resp=sig(:,ch);
                 case 'PLETH'
-                    patiend_data.Pleth=sig(:,ch);
+                    patient_data.Pleth=sig(:,ch);
             end
         end
         
         
-        allpatients{i}=patiend_data;
+        allpatients{i}=patient_data;
         
     end
 end
+
+save('PatientData','-v7.3')
